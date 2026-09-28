@@ -1,0 +1,492 @@
+// ============================================
+// Island Rave - Prisma Schema
+// Full-stack event ticketing platform
+// ============================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum UserRole {
+  SUPER_ADMIN
+  EVENT_MANAGER
+  FINANCE
+  CHECK_IN_STAFF
+  CUSTOMER
+}
+
+enum EventStatus {
+  DRAFT
+  PUBLISHED
+  SOLD_OUT
+  CANCELLED
+  COMPLETED
+}
+
+enum TicketTypeStatus {
+  ACTIVE
+  INACTIVE
+  SOLD_OUT
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+  EXPIRED
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  PAID
+  FAILED
+  CANCELLED
+  REFUNDED
+  REVERSED
+}
+
+enum TicketStatus {
+  VALID
+  USED
+  CANCELLED
+  EXPIRED
+  REFUNDED
+}
+
+enum DiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+enum AuditAction {
+  EVENT_CREATED
+  EVENT_UPDATED
+  EVENT_STATUS_CHANGED
+  TICKET_TYPE_CREATED
+  TICKET_TYPE_UPDATED
+  TICKET_PRICE_CHANGED
+  ORDER_CREATED
+  ORDER_UPDATED
+  ORDER_CANCELLED
+  PAYMENT_RECEIVED
+  PAYMENT_FAILED
+  REFUND_RECORDED
+  TICKET_GENERATED
+  TICKET_CANCELLED
+  TICKET_CHECKED_IN
+  ADMIN_CREATED
+  ADMIN_UPDATED
+  ADMIN_ROLE_CHANGED
+  DISCOUNT_CREATED
+  DISCOUNT_UPDATED
+  SETTINGS_UPDATED
+}
+
+// ============================================
+// USER MODEL
+// ============================================
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  phone         String?
+  role          UserRole  @default(CUSTOMER)
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  orders      Order[]
+  tickets     Ticket[]
+  checkIns    CheckIn[]    @relation("CheckedInBy")
+  auditLogs   AuditLog[]
+  
+  @@index([email])
+  @@index([role])
+  @@index([phone])
+  @@map("users")
+}
+
+// ============================================
+// EVENT MODEL
+// ============================================
+
+model Event {
+  id              String      @id @default(uuid())
+  name            String
+  slug            String      @unique
+  description     String?     @default("Event description will be provided by the organizer.")
+  shortDescription String?
+  bannerUrl       String?
+  posterUrl       String?
+  
+  // Location
+  venueName       String
+  venueAddress    String?
+  city            String?
+  country         String?     @default("Ghana")
+  googleMapsUrl   String?
+  latitude        Float?
+  longitude       Float?
+  directions      String?
+  
+  // Date and Time
+  eventDate       DateTime?
+  startTime       String?     @default("Time Coming Soon")
+  endTime         String?
+  doorsOpen       String?
+  
+  // Capacity
+  totalCapacity   Int?
+  
+  // Organizer
+  organizerName   String?     @default("Organizer information coming soon")
+  organizerEmail  String?
+  organizerPhone  String?
+  organizerLogo   String?
+  
+  // Social
+  website         String?
+  instagram       String?
+  twitter         String?
+  facebook        String?
+  tiktok          String?
+  
+  // Policy
+  refundPolicy    String?     @default("Refund policy will be provided by the organizer.")
+  termsConditions String?     @default("Terms and conditions will be provided by the organizer.")
+  eventRules      String?
+  ageRestriction  String?
+  
+  // Contact
+  contactEmail    String?
+  contactPhone    String?
+  
+  // Status
+  status          EventStatus @default(DRAFT)
+  isFeatured      Boolean     @default(false)
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  ticketTypes     TicketType[]
+  orders          Order[]
+  tickets         Ticket[]
+  discountCodes   DiscountCode[]
+
+  @@index([slug])
+  @@index([status])
+  @@map("events")
+}
+
+// ============================================
+// TICKET TYPE MODEL
+// ============================================
+
+model TicketType {
+  id                String           @id @default(uuid())
+  eventId           String
+  name              String
+  description       String?
+  price             Float
+  currency          String           @default("GHS")
+  totalQuantity     Int
+  soldQuantity      Int              @default(0)
+  reservedQuantity  Int              @default(0)
+  maxPerCustomer    Int              @default(5)
+  sortOrder         Int              @default(0)
+  
+  // Early Bird
+  earlyBirdDeadline DateTime?
+  isEarlyBird       Boolean          @default(false)
+  
+  // Status
+  status            TicketTypeStatus @default(ACTIVE)
+  salesStartDate    DateTime?
+  salesEndDate      DateTime?
+  
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+
+  event             Event            @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  orderItems        OrderItem[]
+  tickets           Ticket[]
+
+  @@index([eventId])
+  @@index([status])
+  @@map("ticket_types")
+}
+
+// ============================================
+// ORDER MODEL
+// ============================================
+
+model Order {
+  id              String       @id @default(uuid())
+  orderReference  String       @unique
+  eventId         String
+  userId          String?
+  
+  // Guest checkout info
+  customerEmail   String
+  customerName    String
+  customerPhone   String
+  
+  // Pricing
+  subtotal        Float
+  serviceFee      Float        @default(0)
+  discount        Float        @default(0)
+  totalAmount     Float
+  currency        String       @default("GHS")
+  
+  // Status
+  status          OrderStatus  @default(PENDING)
+  
+  // Reservation
+  reservedUntil   DateTime?
+  
+  // Discount
+  discountCodeId  String?
+  
+  // Metadata
+  ipAddress       String?
+  userAgent       String?
+  notes           String?
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  paidAt          DateTime?
+  cancelledAt     DateTime?
+
+  event           Event        @relation(fields: [eventId], references: [id])
+  user            User?        @relation(fields: [userId], references: [id])
+  discountCode    DiscountCode? @relation(fields: [discountCodeId], references: [id])
+  items           OrderItem[]
+  payment         Payment?
+  tickets         Ticket[]
+
+  @@index([orderReference])
+  @@index([customerEmail])
+  @@index([customerPhone])
+  @@index([status])
+  @@index([eventId])
+  @@index([userId])
+  @@map("orders")
+}
+
+// ============================================
+// ORDER ITEM MODEL
+// ============================================
+
+model OrderItem {
+  id            String     @id @default(uuid())
+  orderId       String
+  ticketTypeId  String
+  quantity      Int
+  unitPrice     Float
+  totalPrice    Float
+  currency      String     @default("GHS")
+  
+  createdAt     DateTime   @default(now())
+
+  order         Order      @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  ticketType    TicketType @relation(fields: [ticketTypeId], references: [id])
+
+  @@index([orderId])
+  @@index([ticketTypeId])
+  @@map("order_items")
+}
+
+// ============================================
+// PAYMENT MODEL
+// ============================================
+
+model Payment {
+  id                String        @id @default(uuid())
+  orderId           String        @unique
+  paymentReference  String        @unique
+  
+  // Payment details
+  amount            Float
+  currency          String        @default("GHS")
+  status            PaymentStatus @default(PENDING)
+  
+  // Gateway
+  provider          String        @default("paystack")
+  gatewayReference  String?
+  gatewayResponse   String?       @db.Text
+  authorizationUrl  String?
+  accessCode        String?
+  
+  // Channel
+  channel           String?
+  cardType          String?
+  last4             String?
+  bank              String?
+  mobileMoneyNumber String?
+  
+  // Verification
+  verifiedAt        DateTime?
+  webhookReceivedAt DateTime?
+  webhookId         String?
+  
+  // Metadata
+  ipAddress         String?
+  metadata          String?       @db.Text
+  failureReason     String?
+  
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  paidAt            DateTime?
+
+  order             Order         @relation(fields: [orderId], references: [id])
+
+  @@index([paymentReference])
+  @@index([gatewayReference])
+  @@index([status])
+  @@index([webhookId])
+  @@map("payments")
+}
+
+// ============================================
+// TICKET MODEL
+// ============================================
+
+model Ticket {
+  id              String       @id @default(uuid())
+  ticketNumber    String       @unique
+  ticketToken     String       @unique
+  orderId         String
+  eventId         String
+  ticketTypeId    String
+  userId          String?
+  
+  // Holder info
+  holderName      String
+  holderEmail     String
+  holderPhone     String?
+  
+  // Details
+  ticketTypeName  String
+  price           Float
+  currency        String       @default("GHS")
+  
+  // Status
+  status          TicketStatus @default(VALID)
+  
+  // QR
+  qrCodeData      String
+  
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+  cancelledAt     DateTime?
+
+  order           Order        @relation(fields: [orderId], references: [id])
+  event           Event        @relation(fields: [eventId], references: [id])
+  ticketType      TicketType   @relation(fields: [ticketTypeId], references: [id])
+  user            User?        @relation(fields: [userId], references: [id])
+  checkIn         CheckIn?
+
+  @@index([ticketNumber])
+  @@index([ticketToken])
+  @@index([orderId])
+  @@index([eventId])
+  @@index([status])
+  @@index([holderEmail])
+  @@map("tickets")
+}
+
+// ============================================
+// CHECK-IN MODEL
+// ============================================
+
+model CheckIn {
+  id            String   @id @default(uuid())
+  ticketId      String   @unique
+  checkedInById String
+  
+  // Details
+  checkedInAt   DateTime @default(now())
+  location      String?
+  notes         String?
+  deviceInfo    String?
+  
+  ticket        Ticket   @relation(fields: [ticketId], references: [id])
+  checkedInBy   User     @relation("CheckedInBy", fields: [checkedInById], references: [id])
+
+  @@index([ticketId])
+  @@index([checkedInById])
+  @@index([checkedInAt])
+  @@map("check_ins")
+}
+
+// ============================================
+// DISCOUNT CODE MODEL
+// ============================================
+
+model DiscountCode {
+  id            String       @id @default(uuid())
+  code          String       @unique
+  eventId       String
+  type          DiscountType
+  value         Float
+  maxUses       Int?
+  usedCount     Int          @default(0)
+  minOrderAmount Float?
+  isActive      Boolean      @default(true)
+  validFrom     DateTime?
+  validUntil    DateTime?
+  
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  event         Event        @relation(fields: [eventId], references: [id])
+  orders        Order[]
+
+  @@index([code])
+  @@index([eventId])
+  @@map("discount_codes")
+}
+
+// ============================================
+// AUDIT LOG MODEL
+// ============================================
+
+model AuditLog {
+  id          String      @id @default(uuid())
+  userId      String?
+  action      AuditAction
+  entityType  String
+  entityId    String?
+  description String
+  metadata    String?     @db.Text
+  ipAddress   String?
+  
+  createdAt   DateTime    @default(now())
+
+  user        User?       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([entityType])
+  @@index([createdAt])
+  @@map("audit_logs")
+}

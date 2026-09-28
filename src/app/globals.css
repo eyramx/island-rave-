@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+  }
+
+  body {
+    background-color: theme('colors.black');
+    color: theme('colors.white');
+    font-family: theme('fontFamily.sans');
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-image: linear-gradient(to right, theme('colors.rave-orange'), theme('colors.rave-pink'));
+  }
+  
+  .bg-gradient-rave {
+    background-image: linear-gradient(135deg, theme('colors.rave-orange'), theme('colors.rave-pink'));
+  }
+  
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  @keyframes laserSweep {
+    0% {
+      top: 8%;
+      opacity: 0.6;
+    }
+    50% {
+      top: 88%;
+      opacity: 1;
+    }
+    100% {
+      top: 8%;
+      opacity: 0.6;
+    }
+  }
+
+  .animate-laser {
+    animation: laserSweep 2.2s ease-in-out infinite;
+  }
+}
+
