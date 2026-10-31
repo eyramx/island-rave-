@@ -15,18 +15,10 @@ interface CountdownTime {
 export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'hero' | 'compact' | 'card' | 'staff-gate' }) {
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
-  // Target: Saturday/Sunday 8:00 PM GMT
+  // Island Rave starts at 3:00 PM GMT on 11 December 2026.
   const calculateTimeRemaining = (): CountdownTime => {
     const now = new Date();
-    
-    // Create today's 8:00 PM GMT target
-    const target = new Date();
-    target.setUTCHours(20, 0, 0, 0); // 8:00 PM GMT
-
-    // If target has passed today, set to tomorrow 8:00 PM GMT
-    if (target.getTime() <= now.getTime()) {
-      target.setUTCDate(target.getUTCDate() + 1);
-    }
+    const target = new Date('2026-12-11T15:00:00Z');
 
     const diff = Math.max(0, target.getTime() - now.getTime());
 
@@ -69,11 +61,11 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-black/60 border border-rave-orange/40 text-xs text-white font-mono shadow-[0_0_15px_rgba(249,115,22,0.25)] select-none">
         <span className="flex items-center gap-1.5 text-rave-orange font-bold uppercase tracking-wider text-[10px]">
           <span className="w-2 h-2 rounded-full bg-rave-orange animate-ping" />
-          <span>8PM Live Countdown</span>
+          <span>3PM Event Countdown</span>
         </span>
         <span className="text-gray-500">|</span>
         <span suppressHydrationWarning className="font-black text-white tracking-widest text-[11px]">
-          {mounted ? `${padZero(timeLeft.hours)}h : ${padZero(timeLeft.minutes)}m : ${padZero(timeLeft.seconds)}s` : '15h : 18m : 26s'}
+          {mounted ? `${padZero(timeLeft.hours)}h : ${padZero(timeLeft.minutes)}m : ${padZero(timeLeft.seconds)}s` : '--h : --m : --s'}
         </span>
       </div>
     );
@@ -92,7 +84,7 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
                   Gate Ingress Countdown
                 </span>
                 <span className="text-[10px] font-mono text-gray-400 bg-white/5 px-2 py-0.5 rounded-full border border-white/10">
-                  Target: 8:00 PM GMT
+                  Target: 3:00 PM GMT, 11 Dec 2026
                 </span>
               </div>
               <p className="text-xs text-gray-300 font-medium mt-0.5">
@@ -104,21 +96,21 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
           <div className="flex items-center gap-1.5 sm:gap-2 font-mono self-start sm:self-auto">
             <div className="bg-black/80 px-2.5 py-1.5 rounded-xl border border-white/15 text-center min-w-[46px]">
               <span suppressHydrationWarning className="block text-lg font-black text-white">
-                {mounted ? padZero(timeLeft.hours) : '15'}
+                {mounted ? padZero(timeLeft.hours) : '--'}
               </span>
               <span className="text-[8px] text-gray-400 uppercase font-bold">Hours</span>
             </div>
             <span className="text-rave-orange font-bold text-base animate-pulse">:</span>
             <div className="bg-black/80 px-2.5 py-1.5 rounded-xl border border-white/15 text-center min-w-[46px]">
               <span suppressHydrationWarning className="block text-lg font-black text-white">
-                {mounted ? padZero(timeLeft.minutes) : '18'}
+                {mounted ? padZero(timeLeft.minutes) : '--'}
               </span>
               <span className="text-[8px] text-gray-400 uppercase font-bold">Mins</span>
             </div>
             <span className="text-rave-orange font-bold text-base animate-pulse">:</span>
             <div className="bg-black/80 px-2.5 py-1.5 rounded-xl border border-rave-orange/40 text-center min-w-[46px] shadow-[0_0_12px_rgba(249,115,22,0.3)]">
               <span suppressHydrationWarning className="block text-lg font-black text-rave-orange">
-                {mounted ? padZero(timeLeft.seconds) : '26'}
+                {mounted ? padZero(timeLeft.seconds) : '--'}
               </span>
               <span className="text-[8px] text-rave-orange font-bold uppercase">Secs</span>
             </div>
@@ -140,28 +132,28 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
                 Live Event Countdown
               </span>
             </div>
-            <h4 className="text-lg font-black text-white mt-0.5">Doors Open at 8:00 PM GMT</h4>
-            <p className="text-xs text-gray-400 mt-0.5">Gate opening and wristband check-in starts 2 hours prior at 6:00 PM</p>
+            <h4 className="text-lg font-black text-white mt-0.5">Doors Open at 3:00 PM GMT</h4>
+            <p className="text-xs text-gray-400 mt-0.5">Gate opening and wristband check-in starts 2 hours prior at 1:00 PM</p>
           </div>
 
           <div className="flex items-center gap-2 font-mono">
             <div className="bg-black/60 px-3 py-2 rounded-xl border border-white/10 text-center min-w-[50px]">
               <span suppressHydrationWarning className="block text-xl font-black text-white">
-                {mounted ? padZero(timeLeft.hours) : '15'}
+                {mounted ? padZero(timeLeft.hours) : '--'}
               </span>
               <span className="text-[9px] text-gray-400 uppercase">Hours</span>
             </div>
             <span className="text-rave-orange font-bold text-lg animate-pulse">:</span>
             <div className="bg-black/60 px-3 py-2 rounded-xl border border-white/10 text-center min-w-[50px]">
               <span suppressHydrationWarning className="block text-xl font-black text-white">
-                {mounted ? padZero(timeLeft.minutes) : '18'}
+                {mounted ? padZero(timeLeft.minutes) : '--'}
               </span>
               <span className="text-[9px] text-gray-400 uppercase">Mins</span>
             </div>
             <span className="text-rave-orange font-bold text-lg animate-pulse">:</span>
             <div className="bg-black/60 px-3 py-2 rounded-xl border border-rave-orange/40 text-center min-w-[50px] shadow-[0_0_12px_rgba(249,115,22,0.3)]">
               <span suppressHydrationWarning className="block text-xl font-black text-rave-orange">
-                {mounted ? padZero(timeLeft.seconds) : '26'}
+                {mounted ? padZero(timeLeft.seconds) : '--'}
               </span>
               <span className="text-[9px] text-rave-orange font-bold uppercase">Secs</span>
             </div>
@@ -190,7 +182,7 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
               Real-Time Event Countdown
             </span>
             <span className="hidden sm:inline-block text-gray-600">•</span>
-            <span className="text-rave-orange text-xs font-semibold">Doors Open 8:00 PM GMT Sharp</span>
+            <span className="text-rave-orange text-xs font-semibold">Doors Open 3:00 PM GMT Sharp</span>
           </div>
 
           <div className="flex items-center gap-2 self-start sm:self-auto">
@@ -206,7 +198,7 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
           {/* Days */}
           <div className="glass-panel p-3 sm:p-5 rounded-2xl border border-white/10 bg-white/[0.02] text-center flex flex-col justify-center transition-transform hover:scale-[1.02]">
             <span suppressHydrationWarning className="text-2xl sm:text-4xl md:text-6xl font-black text-white tracking-tight font-mono">
-              {mounted ? padZero(timeLeft.days) : '00'}
+              {mounted ? padZero(timeLeft.days) : '--'}
             </span>
             <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-semibold mt-1">
               Days
@@ -216,7 +208,7 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
           {/* Hours */}
           <div className="glass-panel p-3 sm:p-5 rounded-2xl border border-white/10 bg-white/[0.02] text-center flex flex-col justify-center transition-transform hover:scale-[1.02]">
             <span suppressHydrationWarning className="text-2xl sm:text-4xl md:text-6xl font-black text-white tracking-tight font-mono">
-              {mounted ? padZero(timeLeft.hours) : '15'}
+              {mounted ? padZero(timeLeft.hours) : '--'}
             </span>
             <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-semibold mt-1">
               Hours
@@ -226,7 +218,7 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
           {/* Minutes */}
           <div className="glass-panel p-3 sm:p-5 rounded-2xl border border-white/10 bg-white/[0.02] text-center flex flex-col justify-center transition-transform hover:scale-[1.02]">
             <span suppressHydrationWarning className="text-2xl sm:text-4xl md:text-6xl font-black text-white tracking-tight font-mono">
-              {mounted ? padZero(timeLeft.minutes) : '18'}
+              {mounted ? padZero(timeLeft.minutes) : '--'}
             </span>
             <span className="text-[10px] sm:text-xs text-gray-400 uppercase tracking-widest font-semibold mt-1">
               Minutes
@@ -236,7 +228,7 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
           {/* Seconds */}
           <div className="glass-panel p-3 sm:p-5 rounded-2xl border border-rave-orange/40 bg-rave-orange/10 text-center flex flex-col justify-center shadow-[0_0_20px_rgba(249,115,22,0.2)] transition-transform hover:scale-[1.02]">
             <span suppressHydrationWarning className="text-2xl sm:text-4xl md:text-6xl font-black text-rave-orange tracking-tight font-mono animate-pulse">
-              {mounted ? padZero(timeLeft.seconds) : '26'}
+              {mounted ? padZero(timeLeft.seconds) : '--'}
             </span>
             <span className="text-[10px] sm:text-xs text-rave-orange uppercase tracking-widest font-black mt-1">
               Seconds
@@ -268,7 +260,7 @@ export default function RealTimeCountdown({ variant = 'hero' }: { variant?: 'her
           <div className="flex items-center justify-between text-[11px] text-gray-400 pt-1">
             <span>Main Beach Stage • La Plage Club</span>
             <span suppressHydrationWarning className="text-rave-orange font-semibold">
-              Early-Bird Phase Closes In: {mounted ? `${padZero(timeLeft.hours)}h : ${padZero(timeLeft.minutes)}m` : '15h : 18m'}
+              Event starts in: {mounted ? `${padZero(timeLeft.days)}d : ${padZero(timeLeft.hours)}h : ${padZero(timeLeft.minutes)}m` : '--d : --h : --m'}
             </span>
           </div>
         </div>

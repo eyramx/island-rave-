@@ -75,10 +75,22 @@ export const config = {
 // Validate critical config in production
 export function validateConfig(): string[] {
   const errors: string[] = [];
-  
+
   if (config.app.env === 'production') {
+    if (!process.env.DATABASE_URL) {
+      errors.push('DATABASE_URL is required in production');
+    }
+    if (!process.env.APP_URL || process.env.APP_URL.includes('localhost')) {
+      errors.push('APP_URL must be set to the production domain');
+    }
     if (config.auth.jwtSecret === 'dev-secret-change-in-production') {
       errors.push('JWT_SECRET must be changed for production');
+    }
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      errors.push('NEXT_PUBLIC_SUPABASE_URL is required in production');
+    }
+    if (!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+      errors.push('NEXT_PUBLIC_SUPABASE_ANON_KEY is required in production');
     }
     if (config.payment.mode === 'live') {
       if (!config.payment.paystack.secretKey) {
@@ -89,6 +101,6 @@ export function validateConfig(): string[] {
       }
     }
   }
-  
+
   return errors;
 }

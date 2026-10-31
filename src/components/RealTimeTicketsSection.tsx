@@ -47,7 +47,7 @@ export default function RealTimeTicketsSection({ eventId, ticketTypes }: RealTim
     // Periodic recent purchase pulse
     const purchaseInterval = setInterval(() => {
       const names = ['Kofi from East Legon', 'Ama from Osu', 'Jessica from Cantonments', 'Kwame from Airport City', 'Yaw from Tema'];
-      const tiers = ['VIP Tropical Pass', 'Early-Bird General Admission', 'Cabana Lounge Table'];
+      const tiers = ['VIP Tropical Pass', 'General Admission', 'Cabana Lounge Table'];
       const randomName = names[Math.floor(Math.random() * names.length)];
       const randomTier = tiers[Math.floor(Math.random() * tiers.length)];
       setRecentPurchase(`${randomName} just secured 2x ${randomTier} via MTN MoMo`);

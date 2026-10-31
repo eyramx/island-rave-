@@ -1,8 +1,17 @@
 import { PrismaClient } from '@prisma/client';
 
+import { validateConfig } from './config';
+
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
+
+if (process.env.NODE_ENV === 'production') {
+  const errors = validateConfig();
+  if (errors.length) {
+    throw new Error(`Production configuration errors: ${errors.join('; ')}`);
+  }
+}
 
 export const prisma =
   globalForPrisma.prisma ??

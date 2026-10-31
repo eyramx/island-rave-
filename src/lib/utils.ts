@@ -107,7 +107,7 @@ export function formatDate(date: Date | string | null): string {
 }
 
 export function formatTime(time: string | null): string {
-  if (!time || time === 'Time Coming Soon') return '8:00 PM GMT';
+  if (!time || time === 'Time Coming Soon') return '3:00 PM GMT';
   return time;
 }
 

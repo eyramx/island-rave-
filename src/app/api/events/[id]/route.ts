@@ -44,8 +44,8 @@ export async function GET(
       id,
       name: 'Island Rave',
       venueName: 'La Plage Beach Club, Accra',
-      startTime: '8:00 PM GMT',
-      eventDate: 'Saturday, 26 September 2026',
+      startTime: '3:00 PM GMT',
+      eventDate: 'Friday, 11 December 2026',
       posterUrl: 'https://images.unsplash.com/photo-1540039155732-68473682de40?auto=format&fit=crop&q=80&w=400',
       ticketTypes: activeTiers
     } 

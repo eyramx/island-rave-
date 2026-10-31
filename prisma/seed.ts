@@ -98,7 +98,10 @@ async function main() {
   
   const event = await prisma.event.upsert({
     where: { slug: generateSlug(eventName) },
-    update: {},
+    update: {
+      eventDate: new Date('2026-12-11T12:00:00Z'),
+      startTime: '3:00 PM GMT',
+    },
     create: {
       name: eventName,
       slug: generateSlug(eventName),
@@ -108,7 +111,8 @@ async function main() {
       venueAddress: 'La Plage Beachfront, Laboma Beach Road, Accra',
       city: 'Accra',
       country: 'Ghana',
-      startTime: '8:00 PM GMT',
+      eventDate: new Date('2026-12-11T12:00:00Z'),
+      startTime: '3:00 PM GMT',
       endTime: '4:00 AM GMT',
       totalCapacity: 5000,
       organizerName: 'Organizer information coming soon',
@@ -122,25 +126,48 @@ async function main() {
 
   console.log(`✅ Created Event: ${event.name}`);
 
-  // 3. Create Early-Bird Ticket Type
-  const ticketTypeName = 'Early-Bird';
-  
-  const ticketType = await prisma.ticketType.create({
+  // 3. Create General Admission Ticket Type
+  const ticketTypeName = 'General Admission';
+  const ticketTypeData = {
+    eventId: event.id,
+    name: ticketTypeName,
+    description: 'Standard access to main stage, food court, and beach areas.',
+    price: 250.00,
+    currency: 'GHS',
+    totalQuantity: 500,
+    maxPerCustomer: 5,
+    sortOrder: 1,
+    isEarlyBird: false,
+    status: 'ACTIVE' as const,
+  };
+  const existingGeneralTier = await prisma.ticketType.findFirst({
+    where: {
+      eventId: event.id,
+      name: { in: [ticketTypeName, 'Early-Bird General Admission', 'Early-Bird'] },
+    },
+  });
+  const ticketType = existingGeneralTier
+    ? await prisma.ticketType.update({ where: { id: existingGeneralTier.id }, data: ticketTypeData })
+    : await prisma.ticketType.create({ data: ticketTypeData });
+
+  console.log(`✅ Created Ticket Type: ${ticketType.name} - GHS ${ticketType.price}`);
+
+  const vipTicketType = await prisma.ticketType.create({
     data: {
       eventId: event.id,
-      name: ticketTypeName,
-      description: 'Limited early access ticket',
-      price: 150.00,
+      name: 'VIP Tropical Pass',
+      description: 'Express lane entrance, dedicated bar lounge, VIP restrooms, and elevated viewing platform.',
+      price: 400.00,
       currency: 'GHS',
-      totalQuantity: 500, // Placeholder quantity
-      maxPerCustomer: 5,
-      sortOrder: 1,
-      isEarlyBird: true,
+      totalQuantity: 150,
+      maxPerCustomer: 4,
+      sortOrder: 2,
+      isEarlyBird: false,
       status: 'ACTIVE',
     },
   });
 
-  console.log(`✅ Created Ticket Type: ${ticketType.name} - GHS ${ticketType.price}`);
+  console.log(`✅ Created Ticket Type: ${vipTicketType.name} - GHS ${vipTicketType.price}`);
 
   console.log('🎉 Seeding completed successfully!');
 }

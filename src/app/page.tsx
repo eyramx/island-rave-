@@ -22,7 +22,7 @@ async function getFeaturedEvent() {
       if (event) {
         return {
           ...event,
-          startTime: (!event.startTime || event.startTime === 'Time Coming Soon') ? '8:00 PM GMT' : event.startTime,
+          startTime: (!event.startTime || event.startTime === 'Time Coming Soon') ? '3:00 PM GMT' : event.startTime,
         };
       }
     } catch (error) {
@@ -38,8 +38,8 @@ async function getFeaturedEvent() {
     name: 'Island Rave',
     description: 'The ultimate tropical event experience. Event description will be provided by the organizer.',
     venueName: 'La Plage Beach Club, Accra',
-    eventDate: new Date('2026-09-26T20:00:00Z'),
-    startTime: '8:00 PM GMT',
+    eventDate: new Date('2026-12-11T12:00:00Z'),
+    startTime: '3:00 PM GMT',
     bannerUrl: 'https://images.unsplash.com/photo-1540039155732-68473682de40?auto=format&fit=crop&q=80&w=2000',
     contactEmail: 'contact@example.com',
     twitter: '#',

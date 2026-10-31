@@ -64,12 +64,12 @@ function DashboardContent({
         ticketToken: 'tok-' + initialRef,
         holderName: 'Ticket Holder',
         ticketTypeName: isCabana ? 'Cabana Lounge Table Package' : 'VIP Tropical Pass',
-        price: isCabana ? 1500.00 : 350.00,
+        price: isCabana ? 1500.00 : 400.00,
         currency: 'GHS',
         eventName: 'Island Rave',
         venueName: 'La Plage Beach Club, Accra',
-        eventDate: 'Saturday, 26 September 2026',
-        startTime: '8:00 PM GMT',
+        eventDate: 'Friday, 11 December 2026',
+        startTime: '3:00 PM GMT',
         status: 'VALID',
         isGroupPass: true,
         maxGuests: isCabana ? 8 : 4,
@@ -143,12 +143,12 @@ function DashboardContent({
         ticketToken: 'tok-' + searchRef.trim(),
         holderName: 'Registered Guest',
         ticketTypeName: isCabana ? 'Cabana Lounge Table Package (8 Guests)' : 'VIP Island Experience (4 Passes)',
-        price: isCabana ? 1500.00 : 350.00,
+        price: isCabana ? 1500.00 : 400.00,
         currency: 'GHS',
         eventName: 'Island Rave',
         venueName: 'La Plage Beach Club, Accra',
-        eventDate: 'Saturday, 26 September 2026',
-        startTime: '8:00 PM GMT',
+        eventDate: 'Friday, 11 December 2026',
+        startTime: '3:00 PM GMT',
         status: 'VALID',
         isGroupPass: true,
         maxGuests: isCabana ? 8 : 4,
@@ -256,7 +256,7 @@ function DashboardContent({
     ctx.fillText('La Plage Beach Club, Accra, Ghana', 60, 180);
     ctx.fillStyle = '#f97316';
     ctx.font = 'bold 22px sans-serif';
-    ctx.fillText('Saturday, 26 September 2026 • 8:00 PM GMT', 60, 215);
+    ctx.fillText('Friday, 11 December 2026 • 3:00 PM GMT', 60, 215);
 
     // Divider
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';

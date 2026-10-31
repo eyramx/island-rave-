@@ -88,7 +88,7 @@ export default function AdminDashboardPage() {
             Event Executive Summary
           </h1>
           <p className="text-sm text-gray-400 mt-1">
-            Island Rave — La Plage Beach Club • Saturday, 26 September 2026
+            Island Rave — La Plage Beach Club • Friday, 11 December 2026
           </p>
         </div>
 

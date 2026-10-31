@@ -51,8 +51,8 @@ export async function GET() {
       checkInsCount: 0,
       totalCapacity: 5000,
       ticketTypes: [
-        { id: 'tt-1', name: 'Early-Bird General', price: 150, soldQuantity: 0, totalQuantity: 300, status: 'ACTIVE' },
-        { id: 'tt-2', name: 'VIP Tropical Pass', price: 350, soldQuantity: 0, totalQuantity: 150, status: 'ACTIVE' },
+        { id: 'tt-1', name: 'General Admission', price: 250, soldQuantity: 0, totalQuantity: 300, status: 'ACTIVE' },
+        { id: 'tt-2', name: 'VIP Tropical Pass', price: 400, soldQuantity: 0, totalQuantity: 150, status: 'ACTIVE' },
         { id: 'tt-3', name: 'Cabana Lounge Package', price: 1500, soldQuantity: 0, totalQuantity: 20, status: 'ACTIVE' },
       ]
     }
